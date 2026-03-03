@@ -6,8 +6,14 @@ let _db: ReturnType<typeof drizzle> | null = null;
 
 function getDb() {
   if (!_db) {
+    const url = process.env.TURSO_DATABASE_URL;
+    if (!url) {
+      throw new Error(
+        "TURSO_DATABASE_URL is not set. Configure it in your environment variables."
+      );
+    }
     const client = createClient({
-      url: process.env.TURSO_DATABASE_URL!,
+      url,
       authToken: process.env.TURSO_AUTH_TOKEN,
     });
     _db = drizzle(client, { schema });
